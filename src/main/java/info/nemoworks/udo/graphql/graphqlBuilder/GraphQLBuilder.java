@@ -37,7 +37,7 @@ public class GraphQLBuilder {
     }
 
     @PostConstruct
-    public GraphQL createGraphQl() throws JsonProcessingException {
+    public GraphQL createGraphQl(){
 
         typeRegistryBuilder.initSchemaDefinition();
         typeRegistryBuilder.initTypeDefinition();
@@ -91,7 +91,12 @@ public class GraphQLBuilder {
                 "  }\n" +
                 "}";
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = mapper.readTree(s);
+        JsonNode actualObj = null;
+        try {
+            actualObj = mapper.readTree(s);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         UdoSchema schema = new UdoSchema("purifier", actualObj);
         SchemaTree schemaTree = new SchemaTree().createSchemaTree(new Gson().fromJson(schema.getSchema().toString(), JsonObject.class));
         typeRegistryBuilder.addSchema(schemaTree);

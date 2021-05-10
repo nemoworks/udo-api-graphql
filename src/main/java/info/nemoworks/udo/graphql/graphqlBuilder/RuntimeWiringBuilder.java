@@ -19,8 +19,8 @@ import java.util.Map;
 public class RuntimeWiringBuilder {
     private RuntimeWiring runtimeWiring;
 
-    @Autowired
-    private UdoMeterRegistry udoMeterRegistry;
+//    @Autowired
+//    private UdoMeterRegistry udoMeterRegistry;
 
     @Autowired
     public RuntimeWiringBuilder() {
@@ -77,9 +77,9 @@ public class RuntimeWiringBuilder {
         GraphQLPropertyConstructor graphQLPropertyConstructor = new GraphQLPropertyConstructor(schemaTree.getName());
 
         //orderDocumentList ==> documentListDataFetcher
-        DocumentListDataFetcher documentListDataFetcher = new DocumentListDataFetcher(udoService);
-        documentListDataFetcher.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
-        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.queryXxlistKeyWord(), documentListDataFetcher);
+//        DocumentListDataFetcher documentListDataFetcher = new DocumentListDataFetcher(udoService);
+//        documentListDataFetcher.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
+//        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.queryXxlistKeyWord(), documentListDataFetcher);
 
         //orderDocument ==>  documentDataFetcher
         DocumentDataFetcher documentDataFetcher = new DocumentDataFetcher(udoService);
@@ -92,9 +92,9 @@ public class RuntimeWiringBuilder {
         this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.createNewXxKeyWord(), documentMutation);
 
         //updateOrder ==> updateDocumentMutation
-        UpdateDocumentMutation updateDocumentMutation = new UpdateDocumentMutation(udoService);
-        updateDocumentMutation.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
-        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.updateXxKeyWord(), updateDocumentMutation);
+//        UpdateDocumentMutation updateDocumentMutation = new UpdateDocumentMutation(udoService);
+//        updateDocumentMutation.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
+//        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.updateXxKeyWord(), updateDocumentMutation);
 
         //deleteOrder ==> deleteDocumentMutation
         DeleteDocumentMutation deleteDocumentMutation = new DeleteDocumentMutation(udoService);
@@ -123,10 +123,10 @@ public class RuntimeWiringBuilder {
                 documentDataFetcher1.setKeyNameInParent(link.getName());
                 dataFetcherMap.put(link.getName(), documentDataFetcher1);
             } else if (link.getLinkType().equals(Link.LinkType.OBJS)) {
-                DocumentListDataFetcher documentListDataFetcher1 = new DocumentListDataFetcher(udoService);
-                documentListDataFetcher1.setDocumentCollectionName(link.getTo());
-                documentListDataFetcher1.setKeyNameInParent(link.getName());
-                dataFetcherMap.put(link.getName(), documentListDataFetcher1);
+//                DocumentListDataFetcher documentListDataFetcher1 = new DocumentListDataFetcher(udoService);
+//                documentListDataFetcher1.setDocumentCollectionName(link.getTo());
+//                documentListDataFetcher1.setKeyNameInParent(link.getName());
+//                dataFetcherMap.put(link.getName(), documentListDataFetcher1);
             }
         });
         return dataFetcherMap;

@@ -1,7 +1,9 @@
 package info.nemoworks.udo.graphql;
 
+import com.google.common.eventbus.EventBus;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
@@ -12,4 +14,8 @@ public class GraphqlApplication {
         SpringApplication.run(GraphqlApplication.class, args);
     }
 
+    @Bean
+    public EventBus eventBus(){
+        return new EventBus();
+    }
 }
