@@ -2,6 +2,7 @@
 //
 //import com.fasterxml.jackson.databind.JsonNode;
 //import com.google.gson.JsonObject;
+//import com.google.gson.internal.LinkedTreeMap;
 //import graphql.schema.DataFetcher;
 //import graphql.schema.DataFetchingEnvironment;
 //import info.nemoworks.udo.model.Udo;
@@ -9,13 +10,10 @@
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Component;
 //
-//import java.util.ArrayList;
-//import java.util.LinkedHashMap;
-//import java.util.List;
-//import java.util.Map;
+//import java.util.*;
 //
 //@Component
-//public class DocumentListDataFetcher implements DataFetcher<List<JsonNode>> {
+//public class DocumentListDataFetcher implements DataFetcher<List<HashMap<String, LinkedTreeMap>>> {
 //
 //    private final UdoService udoService;
 //    private String documentCollectionName;
@@ -35,7 +33,7 @@
 //    }
 //
 //    @Override
-//    public List<JsonNode> get(DataFetchingEnvironment dataFetchingEnvironment) {
+//    public List<HashMap<String, LinkedTreeMap>> get(DataFetchingEnvironment dataFetchingEnvironment) {
 ////        if(keyNameInParent != null){
 ////            JsonObject JsonObject = dataFetchingEnvironment.getSource();
 ////            List<String> ids = (List<String>) JsonObject.get(keyNameInParent);
@@ -45,7 +43,7 @@
 //        List<Udo> udos = this.getDocuments(documentCollectionName);
 //        List<JsonNode> udoContents = new ArrayList<>();
 //        udos.forEach(udo -> {
-//            JsonNode json = udo.getData();
+//            JsonObject json = udo.getData();
 //            json.put("udoi", udo.getUdoi());
 //            udoContents.add(json);
 //        });
@@ -57,8 +55,9 @@
 //        }
 //    }
 //
-//    private List<Udo> getDocuments(String collection) {
-//        return udoService.findAllUdos(collection);
+//    private List<Udo> getUdos(String udoTypeId) {
+//
+//        return udoService.getUdoByType(udoTypeId);
 //    }
 //
 //    private List<JsonNode> getFilterCuts(LinkedHashMap<String, Object> filters, List<Udo> udos) {

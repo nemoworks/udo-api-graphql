@@ -3,13 +3,16 @@ package info.nemoworks.udo.graphql;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import info.nemoworks.udo.graphql.config.ElasticsearchConfig;
 import info.nemoworks.udo.graphql.graphqlBuilder.TypeRegistryBuilder;
 import info.nemoworks.udo.graphql.schemaParser.SchemaTree;
 import info.nemoworks.udo.model.UdoType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
+@Import(ElasticsearchConfig.class)
 @SpringBootTest(classes = {info.nemoworks.udo.graphql.schemaParser.SchemaTree.class
         ,info.nemoworks.udo.graphql.graphqlBuilder.TypeRegistryBuilder.class})
 class GraphqlApplicationTests {
@@ -78,7 +81,7 @@ class GraphqlApplicationTests {
         typeRegistryBuilder.initTypeDefinition();
         typeRegistryBuilder.addSchema(schemaTree);
         typeRegistryBuilder.buildTypeRegistry();
-        System.out.println("adfsfew");
     }
+
 
 }
