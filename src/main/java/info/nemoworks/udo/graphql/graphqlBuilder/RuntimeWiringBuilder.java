@@ -5,14 +5,11 @@ import graphql.schema.idl.RuntimeWiring;
 import info.nemoworks.udo.graphql.dataFetchers.*;
 import info.nemoworks.udo.graphql.schemaParser.GraphQLPropertyConstructor;
 import info.nemoworks.udo.graphql.schemaParser.SchemaTree;
-import info.nemoworks.udo.model.Link;
 import info.nemoworks.udo.service.UdoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
