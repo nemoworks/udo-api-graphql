@@ -9,7 +9,7 @@ import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.SchemaGenerator;
 import info.nemoworks.udo.graphql.schemaParser.SchemaTree;
-import info.nemoworks.udo.model.UdoSchema;
+import info.nemoworks.udo.model.UdoType;
 import info.nemoworks.udo.service.UdoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,15 +90,9 @@ public class GraphQLBuilder {
                 "    }\n" +
                 "  }\n" +
                 "}";
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = null;
-        try {
-            actualObj = mapper.readTree(s);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        UdoSchema schema = new UdoSchema("purifier", actualObj);
-        SchemaTree schemaTree = new SchemaTree().createSchemaTree(new Gson().fromJson(schema.getSchema().toString(), JsonObject.class));
+        JsonObject data = new Gson().fromJson(s,JsonObject.class);
+        UdoType type = new UdoType(data);
+        SchemaTree schemaTree = new SchemaTree().createSchemaTree(new Gson().fromJson(type.getSchema().toString(), JsonObject.class));
         typeRegistryBuilder.addSchema(schemaTree);
         runtimeWiringBuilder.addNewSchemaDataFetcher(udoService, schemaTree);
         typeRegistryBuilder.buildTypeRegistry();

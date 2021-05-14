@@ -7,7 +7,7 @@ import graphql.ExecutionResult;
 import graphql.GraphQL;
 import info.nemoworks.udo.graphql.graphqlBuilder.GraphQLBuilder;
 import info.nemoworks.udo.graphql.schemaParser.SchemaTree;
-import info.nemoworks.udo.model.UdoSchema;
+import info.nemoworks.udo.model.UdoType;
 import info.nemoworks.udo.service.UdoService;
 import info.nemoworks.udo.service.UdoServiceException;
 import org.slf4j.Logger;
@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -42,37 +43,31 @@ public class UdoController {
     public ResponseEntity query(@RequestBody String query) {
         ExecutionResult result = graphQL.execute(query);
         logger.info("errors: " + result.getErrors());
-//        try {
-//            publisher.publishUdo(query);
-//        } catch (MqttException e) {
-//            e.printStackTrace();
-//        }
         if (result.getErrors().isEmpty())
             return ResponseEntity.ok(result.getData());
         else return ResponseEntity.badRequest().body(result.getErrors());
     }
 
     @GetMapping("/schemas")
-    public List<UdoSchema> allSchemas() {
-        logger.info("find all schemas...");
+    public List<UdoType> allUdoTypes() {
+        logger.info("find all udoTypes...");
 //        Gson gson = new Gson();
-        return udoService.getAllSchemas();
+        return udoService.getAllTypes();
     }
 
     @PostMapping("/schemas")
-    public UdoSchema createSchema(@RequestBody JsonNode params) {
-        logger.info("now saving a new schema...");
+    public UdoType createUdoType(@RequestBody JsonObject params) {
+        logger.info("now saving a new udotype...");
 //        System.out.println(params);
-        String name = params.get("schemaName").asText();
-        JsonNode content = params.get("schemaContent");
+        String name = params.get("schemaName").getAsString();
+        JsonObject content = params.get("schemaContent").getAsJsonObject();
 
-        UdoSchema udoSchema = new UdoSchema(name, content);
+        UdoType udoType = new UdoType(content);
         SchemaTree schemaTree = new SchemaTree().createSchemaTree(new Gson()
-                .fromJson(udoSchema.getSchema().toString(), JsonObject.class));
-
+                .fromJson(udoType.getSchema().toString(), JsonObject.class));
         this.graphQL = graphQlBuilder.addSchemaInGraphQL(schemaTree);
         try {
-            return udoService.saveOrUpdateSchema(udoSchema);
+            return udoService.saveOrUpdateType(udoType);
         } catch (UdoServiceException e) {
             e.printStackTrace();
         }
@@ -80,29 +75,29 @@ public class UdoController {
     }
 
     @DeleteMapping("/schemas/{udoi}")
-    public List<UdoSchema> deleteSchema(@PathVariable String udoi){
-        logger.info("now deleting schema " + udoi + "...");
-        UdoSchema udoSchema = udoService.getSchemaById(udoi);
+    public List<UdoType> deleteUdoType(@PathVariable String udoi){
+        logger.info("now deleting udoType " + udoi + "...");
+        UdoType udoType = udoService.getTypeById(udoi);
         SchemaTree schemaTree = new SchemaTree().createSchemaTree(new Gson()
-                .fromJson(udoSchema.getSchema().toString(), JsonObject.class));
+                .fromJson(udoType.getSchema().toString(), JsonObject.class));
         this.graphQL = graphQlBuilder.deleteSchemaInGraphQl(schemaTree);
         try {
-            udoService.deleteSchemaById(udoi);
+            udoService.deleteTypeById(udoi);
         } catch (UdoServiceException e) {
             e.printStackTrace();
         }
-        return udoService.getAllSchemas();
+        return udoService.getAllTypes();
     }
 
     @GetMapping("/schemas/{udoi}")
-    public UdoSchema getSchemaById(@PathVariable String udoi) {
-        logger.info("now finding schema by udoi...");
+    public UdoType getUdoTypeById(@PathVariable String udoi) {
+        logger.info("now finding UdoType by udoi...");
 //        Gson gson = new Gson();
-        return udoService.getSchemaById(udoi);
+        return udoService.getTypeById(udoi);
     }
 
     @PutMapping("/schemas/{udoi}")
-    public UdoSchema updateSchema(@RequestBody JsonNode params, @PathVariable String udoi){
+    public UdoType updateUdoType(@RequestBody JsonNode params, @PathVariable String udoi){
 //        String udoi = params.getString("udoi");
         logger.info("now updating schema " + udoi + "...");
 //        String name = params.get("schemaName").getAsString();

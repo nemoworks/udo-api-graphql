@@ -1,13 +1,11 @@
 package info.nemoworks.udo.graphql;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import info.nemoworks.udo.graphql.graphqlBuilder.TypeRegistryBuilder;
 import info.nemoworks.udo.graphql.schemaParser.SchemaTree;
-import info.nemoworks.udo.model.UdoSchema;
+import info.nemoworks.udo.model.UdoType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -73,10 +71,9 @@ class GraphqlApplicationTests {
                 "    }\n" +
                 "  }\n" +
                 "}";
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode actualObj = mapper.readTree(s);
-        UdoSchema schema = new UdoSchema("purifier", actualObj);
-        SchemaTree schemaTree = new SchemaTree().createSchemaTree(new Gson().fromJson(schema.getSchema().toString(), JsonObject.class));
+        JsonObject data = new Gson().fromJson(s,JsonObject.class);
+        UdoType type = new UdoType(data);
+        SchemaTree schemaTree = new SchemaTree().createSchemaTree(new Gson().fromJson(type.getSchema().toString(), JsonObject.class));
         typeRegistryBuilder.initSchemaDefinition();
         typeRegistryBuilder.initTypeDefinition();
         typeRegistryBuilder.addSchema(schemaTree);

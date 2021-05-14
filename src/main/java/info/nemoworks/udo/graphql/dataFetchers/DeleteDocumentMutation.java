@@ -2,8 +2,12 @@ package info.nemoworks.udo.graphql.dataFetchers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.internal.LinkedTreeMap;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
+import info.nemoworks.udo.model.Udo;
 import info.nemoworks.udo.service.UdoService;
 import info.nemoworks.udo.service.UdoServiceException;
 import lombok.SneakyThrows;
@@ -13,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class DeleteDocumentMutation implements DataFetcher<JsonNode> {
+public class DeleteDocumentMutation implements DataFetcher<Map<String, String>> {
     private final UdoService udoService;
 
     private String documentCollectionName;
@@ -28,21 +32,20 @@ public class DeleteDocumentMutation implements DataFetcher<JsonNode> {
 
     @SneakyThrows
     @Override
-    public JsonNode get(DataFetchingEnvironment dataFetchingEnvironment) {
+    public Map<String, String> get(DataFetchingEnvironment dataFetchingEnvironment) {
         String udoi = dataFetchingEnvironment.getArgument("udoi").toString();
 //        String collection = dataFetchingEnvironment.getArgument("collection").toString();
         return deleteDocumentById(udoi, documentCollectionName);
     }
 
-    private JsonNode deleteDocumentById(String id, String collection)  {
+    private Map<String, String> deleteDocumentById(String id, String collection)  {
         try {
             udoService.deleteUdoById(id);
         } catch (UdoServiceException e) {
             e.printStackTrace();
         }
         Map<String,String> res = new HashMap<>();
-        res.put("deleteResult", "document has been deleted");
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.convertValue(res, JsonNode.class);
+        res.put("deleteResult", "document has been deleted.");
+        return res;
     }
 }
