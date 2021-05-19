@@ -5,19 +5,22 @@ import graphql.schema.idl.RuntimeWiring;
 import info.nemoworks.udo.graphql.dataFetchers.*;
 import info.nemoworks.udo.graphql.schemaParser.GraphQLPropertyConstructor;
 import info.nemoworks.udo.graphql.schemaParser.SchemaTree;
+import info.nemoworks.udo.messaging.HTTPServiceGateway;
 import info.nemoworks.udo.service.UdoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
+@Async
 public class RuntimeWiringBuilder {
     private RuntimeWiring runtimeWiring;
 
-//    @Autowired
-//    private UdoMeterRegistry udoMeterRegistry;
+    @Autowired
+    HTTPServiceGateway httpServiceGateway;
 
     @Autowired
     public RuntimeWiringBuilder() {
@@ -40,6 +43,7 @@ public class RuntimeWiringBuilder {
     void addNewEntryInQueryDataFetcher(String name, DataFetcher dataFetcher) {
         runtimeWiring.getDataFetchers().get("Query").put(name, dataFetcher);
     }
+
 
     void deleteEntryInQueryDataFetcher(String name) {
         runtimeWiring.getDataFetchers().get("Query").remove(name);
@@ -84,7 +88,7 @@ public class RuntimeWiringBuilder {
         this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.queryXxKeyWord(), documentDataFetcher);
 
         //createNewOrder ==> createDocumentMutation
-        CreateDocumentMutation documentMutation = new CreateDocumentMutation(udoService);
+        CreateDocumentMutation documentMutation = new CreateDocumentMutation(udoService,httpServiceGateway);
 //        documentMutation.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
         this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.createNewXxKeyWord(), documentMutation);
 

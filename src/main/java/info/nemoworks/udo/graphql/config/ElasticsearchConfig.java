@@ -1,5 +1,6 @@
 package info.nemoworks.udo.graphql.config;
 
+import com.google.common.eventbus.EventBus;
 import com.google.gson.Gson;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
@@ -22,5 +23,10 @@ public class ElasticsearchConfig {
     @Bean
     Gson gson(){
         return new Gson();
+    }
+
+    @Bean
+    public EventBus eventBus(){
+        return new EventBus();
     }
 }
