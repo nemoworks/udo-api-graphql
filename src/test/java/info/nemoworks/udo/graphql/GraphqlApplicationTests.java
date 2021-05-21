@@ -3,7 +3,6 @@ package info.nemoworks.udo.graphql;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import info.nemoworks.udo.graphql.config.ElasticsearchConfig;
 import info.nemoworks.udo.graphql.graphqlBuilder.TypeRegistryBuilder;
 import info.nemoworks.udo.graphql.schemaParser.SchemaTree;
 import info.nemoworks.udo.model.UdoType;

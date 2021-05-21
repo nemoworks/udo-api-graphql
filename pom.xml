@@ -29,11 +29,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>info.nemoworks</groupId>
-            <artifactId>udo-messaging</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.graphql-java</groupId>
             <artifactId>graphql-java</artifactId>
             <version>16.2</version>

@@ -5,7 +5,6 @@ import graphql.schema.idl.RuntimeWiring;
 import info.nemoworks.udo.graphql.dataFetchers.*;
 import info.nemoworks.udo.graphql.schemaParser.GraphQLPropertyConstructor;
 import info.nemoworks.udo.graphql.schemaParser.SchemaTree;
-import info.nemoworks.udo.messaging.HTTPServiceGateway;
 import info.nemoworks.udo.service.UdoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -18,9 +17,6 @@ import java.util.Map;
 @Async
 public class RuntimeWiringBuilder {
     private RuntimeWiring runtimeWiring;
-
-    @Autowired
-    HTTPServiceGateway httpServiceGateway;
 
     @Autowired
     public RuntimeWiringBuilder() {
@@ -88,7 +84,7 @@ public class RuntimeWiringBuilder {
         this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.queryXxKeyWord(), documentDataFetcher);
 
         //createNewOrder ==> createDocumentMutation
-        CreateDocumentMutation documentMutation = new CreateDocumentMutation(udoService,httpServiceGateway);
+        CreateDocumentMutation documentMutation = new CreateDocumentMutation(udoService);
 //        documentMutation.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
         this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.createNewXxKeyWord(), documentMutation);
 

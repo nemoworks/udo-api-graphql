@@ -5,14 +5,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.internal.LinkedTreeMap;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
-import info.nemoworks.udo.messaging.HTTPServiceGateway;
 import info.nemoworks.udo.model.Udo;
 import info.nemoworks.udo.model.UdoType;
 import info.nemoworks.udo.service.UdoService;
 import info.nemoworks.udo.service.UdoServiceException;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
+
 import java.util.HashMap;
 
 
@@ -21,11 +20,8 @@ public class CreateDocumentMutation implements DataFetcher<HashMap<String, Linke
 
     private final UdoService udoService;
 
-    private final HTTPServiceGateway httpServiceGateway;
-
-    public CreateDocumentMutation(UdoService udoService, HTTPServiceGateway httpServiceGateway) {
+    public CreateDocumentMutation(UdoService udoService) {
         this.udoService = udoService;
-        this.httpServiceGateway = httpServiceGateway;
     }
 
 
@@ -50,7 +46,6 @@ public class CreateDocumentMutation implements DataFetcher<HashMap<String, Linke
         udo.uri = uri;
         try {
             udo = udoService.saveOrUpdateUdo(udo);
-            httpServiceGateway.register(udo.getId(), URI.create(udo.uri));
             return udo;
         } catch (UdoServiceException e) {
             e.printStackTrace();
