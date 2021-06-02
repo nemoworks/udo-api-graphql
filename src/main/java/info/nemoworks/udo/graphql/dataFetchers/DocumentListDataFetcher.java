@@ -1,60 +1,56 @@
-//package info.nemoworks.udo.graphql.dataFetchers;
-//
-//import com.fasterxml.jackson.databind.JsonNode;
-//import com.google.gson.JsonObject;
-//import com.google.gson.internal.LinkedTreeMap;
-//import graphql.schema.DataFetcher;
-//import graphql.schema.DataFetchingEnvironment;
-//import info.nemoworks.udo.model.Udo;
-//import info.nemoworks.udo.service.UdoService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Component;
-//
-//import java.util.*;
-//
-//@Component
-//public class DocumentListDataFetcher implements DataFetcher<List<HashMap<String, LinkedTreeMap>>> {
-//
-//    private final UdoService udoService;
-//    private String documentCollectionName;
-//    private String keyNameInParent;
-//
-//    @Autowired
-//    public DocumentListDataFetcher(UdoService udoService) {
-//        this.udoService = udoService;
-//    }
-//
-//    public void setDocumentCollectionName(String documentCollectionName) {
-//        this.documentCollectionName = documentCollectionName;
-//    }
-//
-//    public void setKeyNameInParent(String keyNameInParent) {
-//        this.keyNameInParent = keyNameInParent;
-//    }
-//
-//    @Override
-//    public List<HashMap<String, LinkedTreeMap>> get(DataFetchingEnvironment dataFetchingEnvironment) {
-////        if(keyNameInParent != null){
-////            JsonObject JsonObject = dataFetchingEnvironment.getSource();
-////            List<String> ids = (List<String>) JsonObject.get(keyNameInParent);
-////            return this.getDocumentsByLinkList(ids);
-////        }
-////        String collection = dataFetchingEnvironment.getArgument("collection").toString();
-//        List<Udo> udos = this.getDocuments(documentCollectionName);
-//        List<JsonNode> udoContents = new ArrayList<>();
-//        udos.forEach(udo -> {
-//            JsonObject json = udo.getData();
-//            json.put("udoi", udo.getUdoi());
-//            udoContents.add(json);
-//        });
-//        LinkedHashMap<String, Object> filters = dataFetchingEnvironment.getArgument("filter");
-//        if (filters == null)
-//            return udoContents;
-//        else {
-//            return getFilterCuts(filters, udos);
-//        }
-//    }
-//
+package info.nemoworks.udo.graphql.dataFetchers;
+
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
+import graphql.schema.DataFetcher;
+import graphql.schema.DataFetchingEnvironment;
+import info.nemoworks.udo.model.Udo;
+import info.nemoworks.udo.service.UdoService;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DocumentListDataFetcher implements DataFetcher<List<HashMap<String, LinkedTreeMap>>> {
+
+    private final UdoService udoService;
+    private String documentCollectionName;
+    private String keyNameInParent;
+
+    @Autowired
+    public DocumentListDataFetcher(UdoService udoService) {
+        this.udoService = udoService;
+    }
+
+    public void setDocumentCollectionName(String documentCollectionName) {
+        this.documentCollectionName = documentCollectionName;
+    }
+
+    public void setKeyNameInParent(String keyNameInParent) {
+        this.keyNameInParent = keyNameInParent;
+    }
+
+    @Override
+    public List<HashMap<String, LinkedTreeMap>> get(
+        DataFetchingEnvironment dataFetchingEnvironment) {
+        String typeId = dataFetchingEnvironment.getArgument("udoTypeId").toString();
+        List<HashMap<String, LinkedTreeMap>> udos = this.getDocumentsByAggregation(typeId);
+        return udos;
+    }
+
+    private List<HashMap<String, LinkedTreeMap>> getDocumentsByAggregation(String typeId) {
+        List<Udo> udos = udoService.getUdoByType(udoService.getTypeById(typeId));
+        List<HashMap<String, LinkedTreeMap>> udoList = new LinkedList<>();
+        for (Udo udo : udos) {
+            HashMap hashMap = new Gson().fromJson(udo.getData().toString(), HashMap.class);
+            hashMap.put("udoi", udo.getId());
+            udoList.add(hashMap);
+        }
+        return udoList;
+    }
+
 //    private List<Udo> getUdos(String udoTypeId) {
 //
 //        return udoService.getUdoByType(udoTypeId);
@@ -75,6 +71,6 @@
 //        }
 //        return new ArrayList<>();
 //    }
-//
-////   private List<Udo> getDocumentsByLinkList()
-//}
+
+//   private List<Udo> getDocumentsByLinkList()
+}

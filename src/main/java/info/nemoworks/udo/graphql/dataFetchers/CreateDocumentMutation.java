@@ -9,10 +9,9 @@ import info.nemoworks.udo.model.Udo;
 import info.nemoworks.udo.model.UdoType;
 import info.nemoworks.udo.service.UdoService;
 import info.nemoworks.udo.service.UdoServiceException;
-import org.springframework.stereotype.Component;
-
-
+import info.nemoworks.udo.storage.UdoNotExistException;
 import java.util.HashMap;
+import org.springframework.stereotype.Component;
 
 
 @Component
@@ -26,19 +25,20 @@ public class CreateDocumentMutation implements DataFetcher<HashMap<String, Linke
 
 
     @Override
-    public  HashMap<String, LinkedTreeMap> get(DataFetchingEnvironment dataFetchingEnvironment) {
+    public HashMap<String, LinkedTreeMap> get(DataFetchingEnvironment dataFetchingEnvironment) {
         //String udoi = dataFetchingEnvironment.getArgument("udoi").toString();
-        JsonObject content = new Gson().fromJson(dataFetchingEnvironment.getArgument("content").toString(), JsonObject.class);
+        JsonObject content = new Gson()
+            .fromJson(dataFetchingEnvironment.getArgument("content").toString(), JsonObject.class);
         String udoTypeId = dataFetchingEnvironment.getArgument("udoTypeId").toString();
         String uri = dataFetchingEnvironment.getArgument("uri").toString();
-        Udo udo = this.createNewUdo(udoTypeId, content,uri);
+        Udo udo = this.createNewUdo(udoTypeId, content, uri);
         assert udo != null;
         HashMap hashMap = new Gson().fromJson(udo.getData().toString(), HashMap.class);
-        hashMap.put("udoi",udo.getId());
+        hashMap.put("udoi", udo.getId());
         return hashMap;
     }
 
-    private Udo createNewUdo(String typeId, JsonObject content,String uri) {
+    private Udo createNewUdo(String typeId, JsonObject content, String uri) {
         UdoType type = udoService.getTypeById(typeId);
 //        type.setId(typeId);
 //        assert type != null;
@@ -47,7 +47,7 @@ public class CreateDocumentMutation implements DataFetcher<HashMap<String, Linke
         try {
             udo = udoService.saveOrUpdateUdo(udo);
             return udo;
-        } catch (UdoServiceException e) {
+        } catch (UdoServiceException | UdoNotExistException e) {
             e.printStackTrace();
         }
         return null;
