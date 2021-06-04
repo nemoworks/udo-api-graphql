@@ -92,6 +92,10 @@ public class SchemaTree {
                             new GraphQLPropertyConstructor(value1.get("typeName").toString())
                                 .inputKeyWordInQuery())));
                         break;
+                    case number:
+                        schemaTree.typeMap.put(key, new TypeName("Float"));
+                        schemaTree.inputMap.put(key, new TypeName("Float"));
+                        schemaTree.filterMap.put(key, new TypeName("Float"));
                     case integer:
                         schemaTree.typeMap.put(key, new TypeName("Int"));
                         schemaTree.inputMap.put(key, new TypeName("Int"));
