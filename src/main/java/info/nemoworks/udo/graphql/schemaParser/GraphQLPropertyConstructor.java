@@ -1,6 +1,7 @@
 package info.nemoworks.udo.graphql.schemaParser;
 
 public class GraphQLPropertyConstructor {
+
     private String schemaName;
 
     private static final String COLLECTION_NAME_PRE = "";
@@ -79,4 +80,7 @@ public class GraphQLPropertyConstructor {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
+    public String getSchemaName() {
+        return schemaName;
+    }
 }
