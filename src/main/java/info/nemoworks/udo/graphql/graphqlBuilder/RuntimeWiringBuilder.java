@@ -2,20 +2,24 @@ package info.nemoworks.udo.graphql.graphqlBuilder;
 
 import graphql.schema.DataFetcher;
 import graphql.schema.idl.RuntimeWiring;
-import info.nemoworks.udo.graphql.dataFetchers.*;
+import info.nemoworks.udo.graphql.dataFetchers.CreateDocumentMutation;
+import info.nemoworks.udo.graphql.dataFetchers.DeleteDocumentMutation;
+import info.nemoworks.udo.graphql.dataFetchers.DocumentDataFetcher;
+import info.nemoworks.udo.graphql.dataFetchers.DocumentListDataFetcher;
+import info.nemoworks.udo.graphql.dataFetchers.UpdateDocumentMutation;
 import info.nemoworks.udo.graphql.schemaParser.GraphQLPropertyConstructor;
 import info.nemoworks.udo.graphql.schemaParser.SchemaTree;
 import info.nemoworks.udo.service.UdoService;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 @Component
 @Async
 public class RuntimeWiringBuilder {
+
     private RuntimeWiring runtimeWiring;
 
     @Autowired
@@ -53,10 +57,11 @@ public class RuntimeWiringBuilder {
         runtimeWiring.getDataFetchers().put(name, dataFetcherMap);
     }
 
-    public void deleteSchemaDataFetcher(SchemaTree schemaTree){
+    public void deleteSchemaDataFetcher(SchemaTree schemaTree) {
         schemaTree.getChildSchemas().forEach((key, value) -> deleteSchemaDataFetcher(value));
 
-        GraphQLPropertyConstructor graphQLPropertyConstructor = new GraphQLPropertyConstructor(schemaTree.getName());
+        GraphQLPropertyConstructor graphQLPropertyConstructor = new GraphQLPropertyConstructor(
+            schemaTree.getName());
 
         this.deleteEntryInQueryDataFetcher(graphQLPropertyConstructor.queryXxlistKeyWord());
         this.deleteEntryInQueryDataFetcher(graphQLPropertyConstructor.queryXxKeyWord());
@@ -69,34 +74,44 @@ public class RuntimeWiringBuilder {
     }
 
     public void addNewSchemaDataFetcher(UdoService udoService, SchemaTree schemaTree) {
-        schemaTree.getChildSchemas().forEach((key, value) -> addNewSchemaDataFetcher(udoService, value));
+        schemaTree.getChildSchemas()
+            .forEach((key, value) -> addNewSchemaDataFetcher(udoService, value));
 
-        GraphQLPropertyConstructor graphQLPropertyConstructor = new GraphQLPropertyConstructor(schemaTree.getName());
+        GraphQLPropertyConstructor graphQLPropertyConstructor = new GraphQLPropertyConstructor(
+            schemaTree.getName());
 
         //orderDocumentList ==> documentListDataFetcher
-//        DocumentListDataFetcher documentListDataFetcher = new DocumentListDataFetcher(udoService);
-//        documentListDataFetcher.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
-//        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.queryXxlistKeyWord(), documentListDataFetcher);
+        DocumentListDataFetcher documentListDataFetcher = new DocumentListDataFetcher(udoService);
+        documentListDataFetcher
+            .setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
+        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.queryXxlistKeyWord(),
+            documentListDataFetcher);
 
         //orderDocument ==>  documentDataFetcher
         DocumentDataFetcher documentDataFetcher = new DocumentDataFetcher(udoService);
         documentDataFetcher.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
-        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.queryXxKeyWord(), documentDataFetcher);
+        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.queryXxKeyWord(),
+            documentDataFetcher);
 
         //createNewOrder ==> createDocumentMutation
         CreateDocumentMutation documentMutation = new CreateDocumentMutation(udoService);
 //        documentMutation.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
-        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.createNewXxKeyWord(), documentMutation);
+        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.createNewXxKeyWord(),
+            documentMutation);
 
         //updateOrder ==> updateDocumentMutation
-//        UpdateDocumentMutation updateDocumentMutation = new UpdateDocumentMutation(udoService);
-//        updateDocumentMutation.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
-//        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.updateXxKeyWord(), updateDocumentMutation);
+        UpdateDocumentMutation updateDocumentMutation = new UpdateDocumentMutation(udoService);
+        updateDocumentMutation
+            .setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
+        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.updateXxKeyWord(),
+            updateDocumentMutation);
 
         //deleteOrder ==> deleteDocumentMutation
         DeleteDocumentMutation deleteDocumentMutation = new DeleteDocumentMutation(udoService);
-        deleteDocumentMutation.setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
-        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.deleteXxKeyWord(), deleteDocumentMutation);
+        deleteDocumentMutation
+            .setDocumentCollectionName(graphQLPropertyConstructor.collectionName());
+        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.deleteXxKeyWord(),
+            deleteDocumentMutation);
 
 //        DocumentMetersMutation documentMetersMutation = new DocumentMetersMutation(prometheusService);
 //        this.addNewEntryInQueryDataFetcher(graphQLPropertyConstructor.metersXxKeyWord(), documentMetersMutation);

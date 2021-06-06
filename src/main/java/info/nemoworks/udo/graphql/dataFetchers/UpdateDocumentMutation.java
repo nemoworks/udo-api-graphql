@@ -9,12 +9,10 @@ import info.nemoworks.udo.model.Udo;
 import info.nemoworks.udo.service.UdoService;
 import info.nemoworks.udo.service.UdoServiceException;
 import info.nemoworks.udo.storage.UdoNotExistException;
-import info.nemoworks.udo.storage.UdoPersistException;
-import lombok.SneakyThrows;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.Objects;
+import lombok.SneakyThrows;
+import org.springframework.stereotype.Component;
 
 @Component
 public class UpdateDocumentMutation implements DataFetcher<HashMap<String, LinkedTreeMap>> {
@@ -35,15 +33,16 @@ public class UpdateDocumentMutation implements DataFetcher<HashMap<String, Linke
     @Override
     public HashMap<String, LinkedTreeMap> get(DataFetchingEnvironment dataFetchingEnvironment) {
         String udoi = dataFetchingEnvironment.getArgument("udoi").toString();
-        JsonObject content = new Gson().fromJson(dataFetchingEnvironment.getArgument("content").toString(), JsonObject.class);
+        JsonObject content = new Gson()
+            .fromJson(dataFetchingEnvironment.getArgument("content").toString(), JsonObject.class);
         String udoTypeId = dataFetchingEnvironment.getArgument("udoTypeId").toString();
         Udo udo = this.updateDocumentById(udoi, content, documentCollectionName);
         HashMap hashMap = new Gson().fromJson(udo.getData().toString(), HashMap.class);
-        hashMap.put("udoi",udo.getId());
+        hashMap.put("udoi", udo.getId());
         return hashMap;
     }
 
-    private Udo updateDocumentById(String id, JsonObject content, String collection){
+    private Udo updateDocumentById(String id, JsonObject content, String collection) {
         Udo udo = udoService.getUdoById(id);
         assert udo != null;
         udo.setData(content);
