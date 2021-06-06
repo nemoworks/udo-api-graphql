@@ -8,6 +8,7 @@ import graphql.schema.DataFetchingEnvironment;
 import info.nemoworks.udo.model.Udo;
 import info.nemoworks.udo.service.UdoService;
 import info.nemoworks.udo.service.UdoServiceException;
+import info.nemoworks.udo.storage.UdoNotExistException;
 import info.nemoworks.udo.storage.UdoPersistException;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -48,7 +49,7 @@ public class UpdateDocumentMutation implements DataFetcher<HashMap<String, Linke
         udo.setData(content);
         try {
             return udoService.saveOrUpdateUdo(udo);
-        } catch (UdoServiceException e) {
+        } catch (UdoServiceException | UdoNotExistException e) {
             e.printStackTrace();
         }
         return null;

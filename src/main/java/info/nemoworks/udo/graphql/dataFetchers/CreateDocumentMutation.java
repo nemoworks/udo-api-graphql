@@ -9,6 +9,7 @@ import info.nemoworks.udo.model.Udo;
 import info.nemoworks.udo.model.UdoType;
 import info.nemoworks.udo.service.UdoService;
 import info.nemoworks.udo.service.UdoServiceException;
+import info.nemoworks.udo.storage.UdoNotExistException;
 import org.springframework.stereotype.Component;
 
 
@@ -47,7 +48,7 @@ public class CreateDocumentMutation implements DataFetcher<HashMap<String, Linke
         try {
             udo = udoService.saveOrUpdateUdo(udo);
             return udo;
-        } catch (UdoServiceException e) {
+        } catch (UdoServiceException | UdoNotExistException e) {
             e.printStackTrace();
         }
         return null;
