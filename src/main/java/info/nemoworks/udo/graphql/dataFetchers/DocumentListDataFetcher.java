@@ -7,8 +7,10 @@ import graphql.schema.DataFetchingEnvironment;
 import info.nemoworks.udo.model.Udo;
 import info.nemoworks.udo.service.UdoService;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,17 +38,40 @@ public class DocumentListDataFetcher implements DataFetcher<List<HashMap<String,
     public List<HashMap<String, LinkedTreeMap>> get(
         DataFetchingEnvironment dataFetchingEnvironment) {
         String typeId = dataFetchingEnvironment.getArgument("udoTypeId").toString();
-        List<HashMap<String, LinkedTreeMap>> udos = this.getDocumentsByAggregation(typeId);
+        LinkedHashMap<String, Object> filters = new LinkedHashMap<>();
+        if (dataFetchingEnvironment.containsArgument("filter")) {
+            filters = dataFetchingEnvironment.getArgument("filter");
+        }
+        List<HashMap<String, LinkedTreeMap>> udos = this.getDocumentsByAggregation(typeId, filters);
         return udos;
     }
 
-    private List<HashMap<String, LinkedTreeMap>> getDocumentsByAggregation(String typeId) {
+    private List<HashMap<String, LinkedTreeMap>> getDocumentsByAggregation(String typeId,
+        LinkedHashMap<String, Object> filters) {
         List<Udo> udos = udoService.getUdoByType(udoService.getTypeById(typeId));
         List<HashMap<String, LinkedTreeMap>> udoList = new LinkedList<>();
+        if (filters == null) {
+            for (Udo udo : udos) {
+                HashMap hashMap = new Gson().fromJson(udo.getData().toString(), HashMap.class);
+                hashMap.put("udoi", udo.getId());
+                udoList.add(hashMap);
+            }
+            return udoList;
+        }
         for (Udo udo : udos) {
-            HashMap hashMap = new Gson().fromJson(udo.getData().toString(), HashMap.class);
-            hashMap.put("udoi", udo.getId());
-            udoList.add(hashMap);
+            boolean res = true;
+            for (Map.Entry<String, Object> entry : filters.entrySet()) {
+                if (udo.getData().getAsJsonObject().has(entry.getKey())) {
+                    if (udo.getData().getAsJsonObject() != entry.getValue()) {
+                        res = false;
+                    }
+                }
+            }
+            if (res = true) {
+                HashMap hashMap = new Gson().fromJson(udo.getData().toString(), HashMap.class);
+                hashMap.put("udoi", udo.getId());
+                udoList.add(hashMap);
+            }
         }
         return udoList;
     }

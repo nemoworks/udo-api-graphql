@@ -9,7 +9,6 @@ import info.nemoworks.udo.model.Udo;
 import info.nemoworks.udo.service.UdoService;
 import info.nemoworks.udo.service.UdoServiceException;
 import info.nemoworks.udo.storage.UdoNotExistException;
-
 import java.util.HashMap;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -35,7 +34,7 @@ public class UpdateDocumentMutation implements DataFetcher<HashMap<String, Linke
         String udoi = dataFetchingEnvironment.getArgument("udoi").toString();
         JsonObject content = new Gson()
             .fromJson(dataFetchingEnvironment.getArgument("content").toString(), JsonObject.class);
-        String udoTypeId = dataFetchingEnvironment.getArgument("udoTypeId").toString();
+//        String udoTypeId = dataFetchingEnvironment.getArgument("udoTypeId").toString();
         Udo udo = this.updateDocumentById(udoi, content, documentCollectionName);
         HashMap hashMap = new Gson().fromJson(udo.getData().toString(), HashMap.class);
         hashMap.put("udoi", udo.getId());

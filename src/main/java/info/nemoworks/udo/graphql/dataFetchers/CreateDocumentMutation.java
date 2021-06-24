@@ -30,8 +30,14 @@ public class CreateDocumentMutation implements DataFetcher<HashMap<String, Linke
         JsonObject content = new Gson()
             .fromJson(dataFetchingEnvironment.getArgument("content").toString(), JsonObject.class);
         String udoTypeId = dataFetchingEnvironment.getArgument("udoTypeId").toString();
-        String uri = dataFetchingEnvironment.getArgument("uri").toString();
-        Udo udo = this.createNewUdo(udoTypeId, content, uri);
+        Udo udo = new Udo();
+        if (dataFetchingEnvironment.containsArgument("uri")) {
+            udo = this.createNewUdo(udoTypeId, content,
+                dataFetchingEnvironment.getArgument("uri").toString());
+        } else {
+            udo = this.createNewUdo(udoTypeId, content, null);
+        }
+
         assert udo != null;
         HashMap hashMap = new Gson().fromJson(udo.getData().toString(), HashMap.class);
         hashMap.put("udoi", udo.getId());
