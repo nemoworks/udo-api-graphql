@@ -1,6 +1,7 @@
 package info.nemoworks.udo.graphql.dataFetchers;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.internal.LinkedTreeMap;
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
@@ -61,13 +62,21 @@ public class DocumentListDataFetcher implements DataFetcher<List<HashMap<String,
         for (Udo udo : udos) {
             boolean res = true;
             for (Map.Entry<String, Object> entry : filters.entrySet()) {
-                if (udo.getData().getAsJsonObject().has(entry.getKey())) {
-                    if (udo.getData().getAsJsonObject() != entry.getValue()) {
-                        res = false;
+                JsonObject data = udo.getData().getAsJsonObject();
+                if (data.has(entry.getKey())) {
+                    if (data.get(entry.getKey()).getAsJsonPrimitive().isNumber()) {
+                        if (data.get(entry.getKey()).getAsInt() != (int) entry.getValue()) {
+                            res = false;
+                        }
+                    } else if (data.get(entry.getKey()).getAsJsonPrimitive().isString()) {
+                        if (!data.get(entry.getKey()).getAsString().equals(entry.getValue())) {
+                            res = false;
+                        }
                     }
+
                 }
             }
-            if (res = true) {
+            if (res) {
                 HashMap hashMap = new Gson().fromJson(udo.getData().toString(), HashMap.class);
                 hashMap.put("udoi", udo.getId());
                 udoList.add(hashMap);
