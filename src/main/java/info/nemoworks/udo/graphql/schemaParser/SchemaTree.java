@@ -141,6 +141,10 @@ public class SchemaTree {
         return schemaTree;
     }
 
+    private String upperCase(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
     public SchemaTree createSchemaTree(JsonObject schema, String name) {
         SchemaTree schemaTree = new SchemaTree();
         JsonObject properties = schema.get("properties").getAsJsonObject();
@@ -150,6 +154,10 @@ public class SchemaTree {
 
             HashMap<String, LinkedTreeMap> hashMap = new Gson()
                 .fromJson(properties.toString(), HashMap.class);
+//            System.out.println(hashMap);
+            hashMap.forEach((key, value) -> {
+                System.out.println("key: " + key + " value: " + value);
+            });
             hashMap.forEach((key, value1) -> {
                 SchemaPropertyType typeName = SchemaPropertyType
                     .valueOf(value1.get("type").toString());
@@ -188,25 +196,26 @@ public class SchemaTree {
                     case object:
                         JsonObject jsonObject = new Gson().toJsonTree(value1).getAsJsonObject();
                         schemaTree.typeMap
-                            .put(key, new TypeName(jsonObject.get("title").getAsString()));
+                            .put(key, new TypeName(
+                                new GraphQLPropertyConstructor(key).schemaKeyWordInGraphQL()));
                         schemaTree.inputMap.put(key,
                             new TypeName(new GraphQLPropertyConstructor(
-                                jsonObject.get("title").getAsString())
+                                key)
                                 .inputKeyWordInQuery()));
                         schemaTree.filterMap.put(key,
                             new TypeName(new GraphQLPropertyConstructor(
-                                jsonObject.get("title").getAsString())
+                                key)
                                 .filterKeyWordInQueryXxlist()));
-                        schemaTree.childSchemas.put(key, this.createSchemaTree(jsonObject));
+                        schemaTree.childSchemas.put(key, this.createSchemaTree(jsonObject, key));
                         break;
                     case array:
-                        jsonObject = new Gson().toJsonTree(value1).getAsJsonObject();
-                        String s = jsonObject.get("items").getAsJsonObject().get("typeName")
-                            .getAsString();
-                        System.out.println(s);
-                        schemaTree.typeMap.put(key, new ListType(new TypeName(s)));
+//                        jsonObject = new Gson().toJsonTree(value1).getAsJsonObject();
+//                        String s = jsonObject.get("items").getAsJsonObject().get("type")
+//                            .getAsString();
+//                        System.out.println(s);
+                        schemaTree.typeMap.put(key, new ListType(new TypeName(key)));
                         schemaTree.inputMap.put(key, new ListType(new TypeName(
-                            new GraphQLPropertyConstructor(s).inputKeyWordInQuery())));
+                            new GraphQLPropertyConstructor(key).inputKeyWordInQuery())));
                         break;
                     case meter:
                         schemaTree.typeMap.put(key, new TypeName("Int"));

@@ -65,6 +65,11 @@ public class TypeRegistryBuilder {
         metersType.put("data", new TypeName("String"));
         typeDefinitionRegistry
             .add(newObjectTypeDefinition("Meter", newFieldDefinitions(metersType)));
+
+//        Map<String, Type> itemTypeMap = new HashMap<>();
+//        itemTypeMap.put("item", new TypeName("Object"));
+//        typeDefinitionRegistry
+//            .add(newObjectTypeDefinition("Object", newFieldDefinitions(itemTypeMap)));
     }
 
     public void buildTypeRegistry() {

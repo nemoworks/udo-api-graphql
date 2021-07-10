@@ -7,6 +7,8 @@ import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
 import info.nemoworks.udo.model.Udo;
 import info.nemoworks.udo.model.UdoType;
+import info.nemoworks.udo.model.Uri;
+import info.nemoworks.udo.model.UriType;
 import info.nemoworks.udo.service.UdoService;
 import info.nemoworks.udo.service.UdoServiceException;
 import info.nemoworks.udo.storage.UdoNotExistException;
@@ -33,9 +35,10 @@ public class CreateDocumentMutation implements DataFetcher<HashMap<String, Linke
         Udo udo = new Udo();
         if (dataFetchingEnvironment.containsArgument("uri")) {
             udo = this.createNewUdo(udoTypeId, content,
-                dataFetchingEnvironment.getArgument("uri").toString());
+                dataFetchingEnvironment.getArgument("uri").toString(),
+                dataFetchingEnvironment.getArgument("uriType").toString());
         } else {
-            udo = this.createNewUdo(udoTypeId, content, null);
+            udo = this.createNewUdo(udoTypeId, content, null, null);
         }
 
         assert udo != null;
@@ -44,12 +47,25 @@ public class CreateDocumentMutation implements DataFetcher<HashMap<String, Linke
         return hashMap;
     }
 
-    private Udo createNewUdo(String typeId, JsonObject content, String uri) {
+    private Udo createNewUdo(String typeId, JsonObject content, String uri, String uriType) {
         UdoType type = udoService.getTypeById(typeId);
 //        type.setId(typeId);
 //        assert type != null;
         Udo udo = new Udo(type, content);
-        udo.uri = uri;
+        if (uri == null) {
+            udo.setUri(new Uri(null, UriType.NOTEXIST));
+        } else {
+            switch (uriType) {
+                case "HTTP":
+                    udo.setUri(new Uri(uri, UriType.HTTP));
+                    break;
+                case "MQTT":
+                    udo.setUri(new Uri(uri, UriType.MQTT));
+                    break;
+                default:
+                    break;
+            }
+        }
         try {
             udo = udoService.saveOrUpdateUdo(udo);
             return udo;
