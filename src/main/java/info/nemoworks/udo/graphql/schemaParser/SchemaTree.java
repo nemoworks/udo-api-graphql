@@ -193,6 +193,11 @@ public class SchemaTree {
                         schemaTree.inputMap.put(key, new TypeName("Int"));
                         schemaTree.filterMap.put(key, new TypeName("Int"));
                         break;
+                    case number:
+                        schemaTree.typeMap.put(key, new TypeName("Float"));
+                        schemaTree.inputMap.put(key, new TypeName("Float"));
+                        schemaTree.filterMap.put(key, new TypeName("Float"));
+                        break;
                     case object:
                         JsonObject jsonObject = new Gson().toJsonTree(value1).getAsJsonObject();
                         schemaTree.typeMap
