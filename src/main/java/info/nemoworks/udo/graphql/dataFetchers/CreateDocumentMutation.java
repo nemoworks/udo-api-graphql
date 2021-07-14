@@ -36,7 +36,7 @@ public class CreateDocumentMutation implements DataFetcher<HashMap<String, Linke
 //                .replace(":", "\\:")
 //                .replace("/", "\\/"), JsonObject.class);
         String contentStr = dataFetchingEnvironment.getArgument("content").toString();
-        System.out.println("contentStr: " + contentStr);
+//        System.out.println("contentStr: " + contentStr);
         JsonReader reader = new JsonReader(new StringReader(contentStr));
         reader.setLenient(true);
         JsonObject content = new Gson().fromJson(reader, JsonObject.class);
@@ -61,6 +61,7 @@ public class CreateDocumentMutation implements DataFetcher<HashMap<String, Linke
         UdoType type = udoService.getTypeById(typeId);
 //        type.setId(typeId);
 //        assert type != null;
+//        content.addProperty("uri", uri);
         Udo udo = new Udo(type, content);
         if (uri == null) {
             udo.setUri(new Uri(null, UriType.NOTEXIST));

@@ -46,7 +46,7 @@ public class UpdateDocumentMutation implements DataFetcher<HashMap<String, Linke
         reader.setLenient(true);
         JsonObject content = new Gson().fromJson(reader, JsonObject.class);
 //        String udoTypeId = dataFetchingEnvironment.getArgument("udoTypeId").toString();
-        System.out.println(content.getAsJsonObject());
+//        System.out.println(content.getAsJsonObject());
         Udo udo = this.updateDocumentById(udoi, content, documentCollectionName);
         HashMap hashMap = new Gson().fromJson(udo.getData().toString(), HashMap.class);
         hashMap.put("udoi", udo.getId());
