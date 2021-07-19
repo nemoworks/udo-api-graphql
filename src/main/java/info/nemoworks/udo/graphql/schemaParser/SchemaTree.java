@@ -141,6 +141,10 @@ public class SchemaTree {
         return schemaTree;
     }
 
+    private String lowerCase(String str) {
+        return str.substring(0, 1).toLowerCase() + str.substring(1);
+    }
+
     private String upperCase(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
@@ -151,13 +155,12 @@ public class SchemaTree {
 //        schemaTree.name = schema.get("title").getAsString();
         schemaTree.name = name;
         if (properties != null) {
-
             HashMap<String, LinkedTreeMap> hashMap = new Gson()
                 .fromJson(properties.toString(), HashMap.class);
 //            System.out.println(hashMap);
-            hashMap.forEach((key, value) -> {
-                System.out.println("key: " + key + " value: " + value);
-            });
+//            hashMap.forEach((key, value) -> {
+//                System.out.println("key: " + key + " value: " + value);
+//            });
             hashMap.forEach((key, value1) -> {
                 SchemaPropertyType typeName = SchemaPropertyType
                     .valueOf(value1.get("type").toString());
@@ -214,13 +217,14 @@ public class SchemaTree {
                         schemaTree.childSchemas.put(key, this.createSchemaTree(jsonObject, key));
                         break;
                     case array:
-//                        jsonObject = new Gson().toJsonTree(value1).getAsJsonObject();
-//                        String s = jsonObject.get("items").getAsJsonObject().get("type")
-//                            .getAsString();
+                        jsonObject = new Gson().toJsonTree(value1).getAsJsonObject();
+                        String s = jsonObject.get("items").getAsJsonObject().get("type")
+                            .getAsString();
 //                        System.out.println(s);
-                        schemaTree.typeMap.put(key, new ListType(new TypeName(key)));
+                        schemaTree.typeMap.put(key, new ListType(new TypeName
+                            (upperCase(s))));
                         schemaTree.inputMap.put(key, new ListType(new TypeName(
-                            new GraphQLPropertyConstructor(key).inputKeyWordInQuery())));
+                            upperCase(s))));
                         break;
                     case meter:
                         schemaTree.typeMap.put(key, new TypeName("Int"));
