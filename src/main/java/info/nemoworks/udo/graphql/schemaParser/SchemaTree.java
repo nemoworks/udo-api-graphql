@@ -130,6 +130,10 @@ public class SchemaTree {
                         schemaTree.filterMap.put(key, new TypeName("Int"));
                         schemaTree.meterList.add(key);
                         break;
+                    case bool:
+                        schemaTree.typeMap.put(key, new TypeName("Boolean"));
+                        schemaTree.inputMap.put(key, new TypeName("Boolean"));
+                        schemaTree.filterMap.put(key, new TypeName("Boolean"));
                     default:
                         schemaTree.typeMap.put(key, new TypeName("String"));
                         schemaTree.inputMap.put(key, new TypeName("String"));
@@ -232,6 +236,10 @@ public class SchemaTree {
                         schemaTree.filterMap.put(key, new TypeName("Int"));
                         schemaTree.meterList.add(key);
                         break;
+                    case bool:
+                        schemaTree.typeMap.put(key, new TypeName("Boolean"));
+                        schemaTree.inputMap.put(key, new TypeName("Boolean"));
+                        schemaTree.filterMap.put(key, new TypeName("Boolean"));
                     default:
                         schemaTree.typeMap.put(key, new TypeName("String"));
                         schemaTree.inputMap.put(key, new TypeName("String"));

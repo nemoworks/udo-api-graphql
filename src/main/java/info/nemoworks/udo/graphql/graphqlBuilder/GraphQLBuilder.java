@@ -47,6 +47,9 @@ public class GraphQLBuilder {
 //            "    \"uri\": {\n" +
 //            "      \"type\": \"String\"\n" +
 //            "    },\n" +
+            "    \"Status\": {\n" +
+            "       \"type\": \"bool\" \n" +
+            "     },\n" +
             "    \"CPU\": {\n" +
             "      \"properties\": {\n" +
             "        \"cores\": {\n" +
